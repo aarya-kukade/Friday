@@ -1,0 +1,248 @@
+/* ==========================================================================
+   FRIDAY Professional Voice Interface — CSS Module
+   All keyframe animations and state-specific overrides live here.
+   Layout, spacing, and color primitives are handled via Tailwind utilities.
+   ========================================================================== */
+
+/* ── Design Tokens ─────────────────────────────────────────────────── */
+:root {
+  --friday-bg:          #0F1419;
+  --friday-bg-2:        #1A1F2E;
+  --friday-cyan:        #00D9FF;
+  --friday-purple:      #7C3AED;
+  --friday-text:        #FFFFFF;
+  --friday-text-muted:  #A0AEC0;
+  --friday-border:      #2D3748;
+  --friday-success:     #10B981;
+  --friday-error:       #EF4444;
+}
+
+/* ── Keyframes ─────────────────────────────────────────────────────── */
+
+/* Idle waveform opacity breath — 2s cycle */
+@keyframes idle-breath {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.6; }
+}
+
+/* Processing gradient sweep — 2s cycle */
+@keyframes processing-gradient {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+/* Status text fade in */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Word reveal for response text */
+@keyframes word-reveal {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Status Bar ────────────────────────────────────────────────────── */
+.statusBar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 24px;
+  background: rgba(26, 31, 46, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--friday-border);
+}
+
+.statusBar__left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.statusBar__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.statusBar__separator {
+  width: 1px;
+  height: 14px;
+  background: var(--friday-border);
+}
+
+.statusBar__label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--friday-text-muted);
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.statusBar__mode {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--friday-cyan);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.statusBar__time {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--friday-text-muted);
+  font-variant-numeric: tabular-nums;
+  font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--friday-text-muted);
+  transition: color 150ms ease, background 150ms ease;
+  outline: none;
+}
+
+.settingsBtn:hover {
+  color: var(--friday-text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.settingsBtn:focus-visible {
+  outline: 2px solid var(--friday-cyan);
+  outline-offset: 2px;
+}
+
+/* ── Waveform Container ────────────────────────────────────────────── */
+.waveformContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 640px;
+  padding: 32px 28px;
+  background: linear-gradient(160deg, #161c2d 0%, #0F1419 100%);
+  border: 1px solid var(--friday-border);
+  border-radius: 12px;
+}
+
+/* ── Waveform SVG Wrapper ──────────────────────────────────────────── */
+.waveformSvg {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  /* GPU compositing layer */
+  transform: translateZ(0);
+  will-change: contents;
+}
+
+/* State: idle — whole group breathes */
+.waveformSvg--idle {
+  animation: idle-breath 2s ease-in-out infinite;
+}
+
+/* State: error — no animation, static */
+.waveformSvg--error {
+  /* intentionally static */
+}
+
+/* ── Status Label ──────────────────────────────────────────────────── */
+.statusLabel {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--friday-text-muted);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  animation: fade-up 300ms ease-out both;
+}
+
+.statusLabel--listening {
+  color: var(--friday-cyan);
+}
+
+.statusLabel--processing {
+  color: var(--friday-text-muted);
+}
+
+.statusLabel--speaking {
+  color: #A78BFA; /* soft purple — less intense than full purple */
+}
+
+.statusLabel--error {
+  color: var(--friday-error);
+}
+
+/* ── Interaction Area ──────────────────────────────────────────────── */
+.interactionArea {
+  width: 100%;
+  max-width: 640px;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transcriptText {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--friday-text-muted);
+  line-height: 1.6;
+  animation: fade-up 300ms ease-out both;
+}
+
+.transcriptText__interim {
+  opacity: 0.5;
+}
+
+.responseText {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--friday-text);
+  line-height: 1.6;
+  animation: fade-up 300ms ease-out both;
+}
+
+.responseText__word {
+  display: inline;
+  animation: word-reveal 200ms ease-out both;
+}
+
+.errorText {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--friday-error);
+  line-height: 1.5;
+  animation: fade-up 200ms ease-out both;
+}
+
+.errorText__label {
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* ── Control Panel ─────────────────────────────────────────────────── */
+.controlPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
